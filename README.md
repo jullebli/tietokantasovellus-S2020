@@ -18,9 +18,9 @@ At least the following use cases will be supported (optional use cases are in pa
 - user removes a recipe
 - user can search for recipes based on an ingredient/ingredients
 - user can search for a recipe based on a string
-(- user can search for recipes based on tags)
-(- user can determine if user's recipes are public or private)
-(- user gets the locations of the ingredients that are listed in Foodie.fi)
+- (user can search for recipes based on tags)
+- (user can determine if user's recipes are public or private)
+- (user gets the locations of the ingredients that are listed in Foodie.fi)
 
 
 ## Database structure
