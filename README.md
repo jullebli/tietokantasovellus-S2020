@@ -28,20 +28,20 @@ At least the following use cases will be supported (optional use cases are in pa
 At least four tables are needed:
 
 - recipe (resepti)
-	-id, name, desciption
+  - id, name, desciption
 - ingredient of the recipe (reseptin raaka-aine)
-	-id, recipe_id, ingredient_id, amount
+  - id, recipe_id, ingredient_id, amount
 - ingredient (raaka-aine)
-	-id, name, (price, EAN code?, location in an S-group's store (that you can get from Foodie.fi)?)
+  - id, name, (price, EAN code?, location in an S-group's store (that you can get from Foodie.fi)?)
 - user (käyttäjä) 
-	-id, username, password, (privilege level?)
+  - id, username, password, (privilege level?)
 
 Additional tables may be added if there is enough time. For example
 
 - tag (tägi)
-	-id, name
+  - id, name
 - tag of the recipe (reseptin tägi)
-	-id, recipe_id, tag_id
+  - id, recipe_id, tag_id
 
 
 ## 
