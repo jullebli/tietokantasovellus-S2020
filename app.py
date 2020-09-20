@@ -7,6 +7,10 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
 db  = SQLAlchemy(app)
 
+@app.route("/")
+def index():
+    return render_template("index.html")
+
 @app.route("/ingredients")
 def list_ingredients():
     result = db.session.execute("SELECT id, name FROM ingredient")

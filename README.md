@@ -47,4 +47,6 @@ Additional tables may be added if there is enough time. For example
 
 https://radiant-depths-05859.herokuapp.com/
 
-## 
+## Status
+
+Currently only minimal functionality has been implemented. You can only list and add ingredients. The next step is to add login, session handling and rest of the tables.
