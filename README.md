@@ -43,5 +43,8 @@ Additional tables may be added if there is enough time. For example
 - tag of the recipe (reseptin tägi)
   - id, recipe_id, tag_id
 
+## Heroku
+
+https://radiant-depths-05859.herokuapp.com/
 
 ## 
