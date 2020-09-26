@@ -1,4 +1,19 @@
 <h1>Recipe database</h1>
+
+{% if session.username %}
+<p> User: {{ session.username }}</p>
+<a href="/logout">Log out</a>
+{% else %}
+<form action="/login" method="POST">
+<p>Username:
+<input type="text" name="username"></p>
+<p>Password:
+<input type="password" name="password"></p>
+<input type="submit" value="Log in">
+<a href="/new_user">Register</a>
+</form>
+{% endif %}
+
 <br>
 <p>Work in progress</p>
 <p><a href="/ingredients">List of all ingredients</a></p> 
