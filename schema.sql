@@ -17,3 +17,10 @@ CREATE TABLE users (
     password_hash TEXT
 );
 
+CREATE TABLE recipe_ingredient (
+    id SERIAL PRIMARY KEY,
+    recipe_id INTEGER REFERENCES recipe (id),
+    ingredient_id INTEGER REFERENCES ingredient (id),
+    amount INTEGER
+    
+);

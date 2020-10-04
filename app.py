@@ -137,8 +137,30 @@ def delete_recipe(id):
 def show_recipe(id):
     if not "username" in session:
         return render_template("error.html", message="You are not logged in")
-    sql = "SELECT name, description FROM recipe WHERE id=:id AND owner_id=(SELECT id FROM users WHERE username=:username)"
+    sql = "SELECT name, description, id FROM recipe WHERE id=:id AND owner_id=(SELECT id FROM users WHERE username=:username)"
     result = db.session.execute(sql, {"id":id, "username":session["username"]})
     recipe = result.fetchone()
-    return render_template("recipe.html", name=recipe[0], description=recipe[1])
     
+    sql = "SELECT name, id FROM ingredient WHERE owner_id=(SELECT id FROM users WHERE username=:username)"
+    result = db.session.execute(sql, {"username":session["username"]})
+    all_ingredients = result.fetchall()
+    
+    sql = "SELECT id, amount, (SELECT name FROM ingredient WHERE id=ingredient_id) FROM recipe_ingredient WHERE recipe_id = :recipe_id"
+    result = db.session.execute(sql, {"recipe_id":id})
+    ingredients = result.fetchall()
+    
+    return render_template("recipe.html", name=recipe[0], description=recipe[1], id=recipe[2], all_ingredients=all_ingredients, ingredients=ingredients)
+
+@app.route("/add_ingredient_to_recipe/<int:recipe_id>", methods=["POST"])
+def add_ingredient_to_recipe(recipe_id):
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    ingredient_id = int(request.form["ingredient"])
+    amount = int(request.form["amount"])
+    #check that user owns the recipe and the ingredient
+    print(repr(ingredient_id))
+    print(repr(recipe_id))
+    sql = "INSERT INTO recipe_ingredient (ingredient_id, recipe_id, amount) VALUES (:ingredient_id, :recipe_id, :amount)"
+    db.session.execute(sql, {"ingredient_id":ingredient_id, "recipe_id":recipe_id, "amount":amount})
+    db.session.commit()
+    return redirect("/recipe/" + str(recipe_id))

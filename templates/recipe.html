@@ -1,3 +1,20 @@
 <h1>{{ name }}</h1>
 <br>
+<ul>
+{% for id, amount, name in ingredients %}
+<li>{{ amount }} {{name}}
+</li>
+{% endfor %}
+</ul>
+<br>
 <pre>{{ description }}</pre>
+<br>
+<form action="/add_ingredient_to_recipe/{{ id }}" method="POST">
+<input value="1" name="amount"></input>
+<select name="ingredient">
+{% for i in all_ingredients %}
+<option value="{{ i[1] }}">{{ i[0] }}</option>
+{% endfor %}
+</select>
+<input type="submit" value="Add ingredient">
+</form>
