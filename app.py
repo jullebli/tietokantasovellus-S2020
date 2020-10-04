@@ -91,3 +91,54 @@ def delete_ingredient(id):
         return render_template("error.html", message="Ingredient does not exist or you don't have access to delete this ingredient")
     db.session.commit()
     return redirect("/ingredients")
+    
+@app.route("/new_recipe")
+def new_recipe():
+    return render_template("new_recipe.html")
+    
+@app.route("/add_recipe", methods=["POST"])
+def add_recipe():
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    name = request.form["name"]
+    description = request.form["description"]
+    if len(name) > 100:
+        return render_template("error.html", message="name of the recipe is too long")
+    if len(description) > 5000:
+        return render_template("error.html", message="description is too long")
+    sql = "INSERT INTO recipe (name, description, owner_id) VALUES (:name, :description, (SELECT id FROM users WHERE username=:username))"
+    db.session.execute(sql, {"name":name, "description":description, "username":session["username"]})
+    db.session.commit()
+    return redirect("/recipes")
+   
+@app.route("/recipes")
+def list_recipes():
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    result = db.session.execute("SELECT id, name FROM recipe WHERE owner_id = (SELECT id FROM users WHERE username=:username)",
+                                {"username":session["username"]})
+    recipes = result.fetchall()
+    return render_template("recipes.html", recipes=recipes)
+    
+@app.route("/delete_recipe/<int:id>", methods=["POST"])
+def delete_recipe(id):
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    sql = "DELETE FROM recipe WHERE id=:id AND owner_id=(SELECT id FROM users WHERE username=:username) RETURNING id"
+    result = db.session.execute(sql, {"id":id, "username":session["username"]})
+    deleted = result.fetchall()
+    print(deleted)
+    if len(deleted) != 1:
+        return render_template("error.html", message="Recipe does not exist or you don't have access to delete this recipe")
+    db.session.commit()
+    return redirect("/recipes")
+    
+@app.route("/recipe/<int:id>")
+def show_recipe(id):
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    sql = "SELECT name, description FROM recipe WHERE id=:id AND owner_id=(SELECT id FROM users WHERE username=:username)"
+    result = db.session.execute(sql, {"id":id, "username":session["username"]})
+    recipe = result.fetchone()
+    return render_template("recipe.html", name=recipe[0], description=recipe[1])
+    

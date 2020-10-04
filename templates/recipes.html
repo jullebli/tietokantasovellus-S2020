@@ -1,0 +1,10 @@
+<h1>List of your recipes</h1>
+<ul>
+{% for i in recipes %}
+<li><a href="/recipe/{{ i.id }}">{{ i.name }}({{ i.id }})</a>
+<form action="/delete_recipe/{{ i.id }}" method="POST"><input type="submit" value="Delete">
+</form>
+</li>
+
+{% endfor %}
+</ul>

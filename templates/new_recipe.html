@@ -1,0 +1,26 @@
+<h1>Add a new recipe</h1>
+<form action="/add_recipe" method="POST" onsubmit="return check(this)">
+Name of the recipe:
+<br/>
+<input type="text" name="name">
+<br>
+Description:
+<br/>
+<textarea name="description" rows="15" cols="60"></textarea>
+<br>
+<input type="submit" value="Add">
+</form>
+
+<script>
+function check(form) {
+    if (form.name.value.length > 100) {
+        alert("Name of the recipe is too long");
+        return false;
+    }
+    if (form.description.vlue.length > 5000) {
+        alert("Desciption is too long");
+        return false;
+    }
+    return true;
+}
+</script>
