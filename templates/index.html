@@ -16,5 +16,7 @@
 
 <br>
 <p>Work in progress</p>
-<p><a href="/ingredients">List of all ingredients</a></p> 
-<p><a href="/new_ingredient">Add new ingredient</a></p>
+{% if session.username %}
+<p><a href="/ingredients">List of all your ingredients</a></p> 
+<p><a href="/new_ingredient">Add a new ingredient</a></p>
+{% endif %}

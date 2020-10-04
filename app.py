@@ -58,7 +58,10 @@ def logout():
 
 @app.route("/ingredients")
 def list_ingredients():
-    result = db.session.execute("SELECT id, name FROM ingredient")
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    result = db.session.execute("SELECT id, name FROM ingredient WHERE owner_id = (SELECT id FROM users WHERE username=:username)",
+                                {"username":session["username"]})
     ingredients = result.fetchall()
     return render_template("ingredients.html", ingredients=ingredients)
     
@@ -68,8 +71,10 @@ def new_ingredient():
 
 @app.route("/add_ingredient", methods=["POST"])
 def add_ingredient():
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
     name = request.form["name"]
-    sql = "INSERT INTO ingredient (name) VALUES (:name)"
-    db.session.execute(sql, {"name":name})
+    sql = "INSERT INTO ingredient (name, owner_id) VALUES (:name, (SELECT id FROM users WHERE username=:username))"
+    db.session.execute(sql, {"name":name, "username":session["username"]})
     db.session.commit()
     return redirect("/ingredients")
