@@ -1,3 +1,9 @@
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username TEXT UNIQUE,
+    password_hash TEXT
+);
+
 CREATE TABLE recipe (
     id SERIAL PRIMARY KEY, 
     name TEXT, 
@@ -9,12 +15,6 @@ CREATE TABLE ingredient (
     id SERIAL PRIMARY KEY, 
     name TEXT,
     owner_id INTEGER REFERENCES users (id)
-);
-
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username TEXT UNIQUE,
-    password_hash TEXT
 );
 
 CREATE TABLE recipe_ingredient (
