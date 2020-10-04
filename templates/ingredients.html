@@ -1,6 +1,10 @@
 <h1>List of your ingredients</h1>
 <ul>
 {% for i in ingredients %}
-<li>{{ i.name }}({{ i.id }})</li>
+<li>
+{{ i.name }}({{ i.id }})<form action="/delete_ingredient/{{ i.id }}" method="POST"><input type="submit" value="Delete">
+</form>
+</li>
+
 {% endfor %}
 </ul>

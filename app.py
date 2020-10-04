@@ -78,3 +78,16 @@ def add_ingredient():
     db.session.execute(sql, {"name":name, "username":session["username"]})
     db.session.commit()
     return redirect("/ingredients")
+
+@app.route("/delete_ingredient/<int:id>", methods=["POST"])
+def delete_ingredient(id):
+    if not "username" in session:
+        return render_template("error.html", message="You are not logged in")
+    sql = "DELETE FROM ingredient WHERE id=:id AND owner_id=(SELECT id FROM users WHERE username=:username) RETURNING id"
+    result = db.session.execute(sql, {"id":id, "username":session["username"]})
+    deleted = result.fetchall()
+    print(deleted)
+    if len(deleted) != 1:
+        return render_template("error.html", message="Ingredient does not exist or you don't have access to delete this ingredient")
+    db.session.commit()
+    return redirect("/ingredients")
