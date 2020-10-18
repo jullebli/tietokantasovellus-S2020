@@ -3,11 +3,19 @@ from flask import redirect, render_template, request, session
 from flask_sqlalchemy import SQLAlchemy
 from os import getenv
 from werkzeug.security import check_password_hash, generate_password_hash
+from exceptions import RecipeError
+
 
 app = Flask(__name__)
 app.secret_key =getenv("SECRET_KEY")
-app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
-db  = SQLAlchemy(app)
+
+from db import db
+import users
+
+def handle_recipe_error(e):
+    return render_template("error.html", message=e)
+
+app.register_error_handler(RecipeError, handle_recipe_error)
 
 @app.route("/")
 def index():
@@ -21,39 +29,19 @@ def new_user():
 def create_user():
     username = request.form["username"]
     password = request.form["password"]
-    
-    #TODO check if user already exists, error.html
-    
-    hash_value = generate_password_hash(password)
-    sql = "INSERT INTO users (username,password_hash) VALUES (:username,:password_hash)"
-    db.session.execute(sql, {"username":username,"password_hash":hash_value})
-    db.session.commit()
-    return redirect("/");
+    users.create_user(username, password)
+    return redirect("/")
     
 @app.route("/login", methods=["POST"])
 def login():
     username = request.form["username"]
     password = request.form["password"]
-    
-    sql = "SELECT password_hash FROM users WHERE username=:username"
-    result = db.session.execute(sql, {"username":username})
-    user = result.fetchone()
-    
-    if user == None:
-        
-        return render_template("error.html", message="Login failed, user does not exist")
-    
-    else:
-        hash_value = user[0]
-        if check_password_hash(hash_value, password):
-            session["username"] = username
-            return redirect("/")
-        else:
-            return render_template("error.html", message="Wrong password")
-    
+    users.login(username, password)
+    return redirect("/")
+   
 @app.route("/logout")
 def logout():
-    del session["username"]
+    users.logout()
     return redirect("/")
 
 @app.route("/ingredients")
@@ -155,9 +143,21 @@ def show_recipe(id):
 def add_ingredient_to_recipe(recipe_id):
     if not "username" in session:
         return render_template("error.html", message="You are not logged in")
-    ingredient_id = int(request.form["ingredient"])
-    amount = int(request.form["amount"])
+    try:
+        ingredient_id = int(request.form["ingredient"])
+    except ValueError:
+        raise RecipeError("Invalid ingredient id")
+
+    try:    
+        amount = int(request.form["amount"])
+    except ValueError:
+        raise RecipeError("Amount is not a numeric value")
+
+    if amount <= 0:
+        raise RecipeError("Amount needs to be positive number")
+
     #check that user owns the recipe and the ingredient
+    
     print(repr(ingredient_id))
     print(repr(recipe_id))
     sql = "INSERT INTO recipe_ingredient (ingredient_id, recipe_id, amount) VALUES (:ingredient_id, :recipe_id, :amount)"
