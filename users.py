@@ -30,4 +30,8 @@ def login(username, password):
             return
         else:
             raise RecipeError("Wrong password")
+
+def logout():
+    del session["username"]
+    
     
